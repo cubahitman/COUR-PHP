@@ -183,18 +183,122 @@
         // Exersice :
         //Afficher la liste des différents services dans une liste, en mettant un service par  <li>
 
-        $request = $pdo->query("SELECT DISTINCT service FROM employes ORDER BY prenom ASC");
-        while ($employes = $request->fetch()) {
+        $request = $pdo->query("SELECT DISTINCT service FROM employes ORDER BY service ASC");
 
-            echo "<ul><li><div>Le service : $employes[service]</div>";
-            "</ul>";
+        echo "<ul>Les services";
+        while ($service = $request->fetch()) {
+
+            echo "<li><div>Le service : $service[service]";
         }
+        echo "</ul>";
         // debug($request->rowCount());
         // $employes = $request->fetch();
 
+        // Je veux recuperer les salaires dans la table 
+        $request = $pdo->query("SELECT DISTINCT salaire FROM employes ORDER BY salaire DESC");
 
+
+        $salaires = $request->fetchAll(); //fetchAll() recoupere tout les resultats dans la requete et les  sort sous forme d'un tableau a 2 dimensions
+
+        // debug($request->rowCount());
+        // debug($salaires);
+
+        echo "<p>Liste des differents salaires dans la table des employes";
+
+        foreach ($salaires as $cle => $value) {
+
+            echo "<li> $value[salaire] </li>"; //<<<<<<<<///// methode ISSA/////////////
+            // echo "<li> {$salaires[$cle]['salaire']} </li>";///////////methode Yasine/////////
+        };
+
+
+        // afficher les employes femmes et qui gagnent un salaire superieur  ou egal a 2000
+        echo "<ul>";
+        $request = $pdo->query("SELECT * FROM employes WHERE sexe ='f' AND salaire >= 2000");
+
+        $employesFemme = $request->fetchAll();
+        // debug($request);
+        // debug($employesFemme);
+        echo "<p>Liste des employes femmes et qui gagnent un salaire superieur  ou egal a 2000";
+        echo "<ul>";
+        // foreach ($employesFemme as $valeur) {// methode 1
+        // echo "<li>Je suis $valeur[prenom] $valeur[nom] du sexe $valeur[sexe] et je gagne $valeur[salaire]</li>"; 
+
+        foreach ($employesFemme as $cle => $valeur) { // methode 2
+            echo "<li>Je suis {$employesFemme[$cle]['prenom']} {$employesFemme[$cle]['nom']} du sexe {$employesFemme[$cle]['sexe']} et je gagne {$employesFemme[$cle]['salaire']}</li>";
+
+
+            // echo "<li>Je suis $valeur[employes] </li>";/// erreur de ma part
+        };
+        echo "</ul>";
 
         ?>
+
+        <h3 class="text-success mb-5">Les employés de notre entreprise embauchés à partir de 2010</h3>
+        "<table class='table'>
+            <thead>
+                <tr>
+                    <th scope="col">prenom</th>
+                    <th scope="col">nom</th>
+                    <th scope="col">sexe</th>
+                    <th scope="col">service</th>
+                    <th scope="col">salaire</th>
+                </tr>
+                <?php
+
+                ////////afficher  les résultats de la requéte dans une table HTML////////////
+
+                $request = $pdo->query("SELECT * FROM employes WHERE date_embauche >= '1/1/2010'");
+                // debug($request);
+
+                // $employe2010 = $request->fetch();
+
+                // debug($employe);
+                // echo "<table class='table'><thead><tr>";
+                while ($employe2010 = $request->fetch()) {
+                    echo "<tr><td>$employe2010[prenom]</td>";
+                    echo "<td>$employe2010[nom]</td>";
+                    echo "<td>$employe2010[sexe]</td>";
+                    echo "<td>$employe2010[service]</td>";
+                    echo "<td>$employe2010[salaire]</td><tr>";
+                }
+                echo " </tr></thead></table>";
+                ?>
+
+
+
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">First</th>
+                            <th scope="col">Last</th>
+                            <th scope="col">Handle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                            <td>@fat</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td colspan="2">Larry the Bird</td>
+                            <td>@twitter</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+
     </main>
     <footer style=" background-color : #EEA545;">
         <div class="container">
@@ -214,3 +318,8 @@
 </body>
 
 </html>
+
+
+
+
+////////////////////
