@@ -2,6 +2,8 @@
 <?php
 session_start();
 
+define("RACINE_SITE", "/COUR-PHP/PHP_pratique/02_cinema/"); // constante qui definit les dossiers dans lequels se situe le site pour pouvoir determiner des chemin absolus a partir de localhost (on ne prend pas localhost).Ainsi nous ecrivons tous les chemins (exp : src, href) en absolus avec cette constante
+
 
 //////////Fonction de débugage/////////////////////////
 
