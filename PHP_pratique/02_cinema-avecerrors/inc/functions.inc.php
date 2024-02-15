@@ -2,7 +2,7 @@
 <?php
 session_start();
 
-define("RACINE_SITE", "/COUR-PHP/PHP_pratique/02_cinema/"); // constante qui definit les dossiers dans lequels se situe le site pour pouvoir determiner des chemin absolus a partir de localhost (on ne prend pas localhost).Ainsi nous ecrivons tous les chemins (exp : src, href) en absolus avec cette constante
+// define("RACINE_SITE", "/COUR-PHP/PHP_pratique/02_cinema/"); // constante qui definit les dossiers dans lequels se situe le site pour pouvoir determiner des chemin absolus a partir de localhost (on ne prend pas localhost).Ainsi nous ecrivons tous les chemins (exp : src, href) en absolus avec cette constante
 
 
 //////////Fonction de débugage/////////////////////////
@@ -14,6 +14,13 @@ function debug($var)
     var_dump($var);
 
     echo '</pre>';
+}
+
+function alert(string $contenu, string $class)
+{
+
+    return "<div class='alert alert-$class alert-dismissible fade show text-center w-50 m-auto mb-5' role'alert'>
+    $contenu </div>";
 }
 
 
@@ -67,7 +74,7 @@ function connexionBdd()
     return $pdo;
 }
 
-//    connexionBdd();
+connexionBdd();
 
 /////////////////////// Une function pour créer la table users /////////
 
@@ -95,6 +102,65 @@ function createTableUsers()
     $request = $pdo->exec($sql);
 }
 // createTableUsers();
+
+// <<<<<<<<<<<<<<<<<<<Fontion du CRUD pour les utilisateurs Users <<<<<<<<<<<<<<<<<<<<<<<<
+
+function inscriptionUsers(string $firstName, string $lastName, string $pseudo,  string $email, string $phone, string $mdp, string $civility, string $birthday, string $adress, string $zipCode, string $city, string $country): void
+{
+
+    $pdo = connexionBdd(); // je stokc ma connexion a la BDD dans une variable
+
+    $sql = "INSERT INTO users
+    (firstName, lastName, pseudo, email, phone, mdp, civility, birthday, address, zipCode, city, country)
+    VALUES
+    (:firstName, :lastName, :pseudo, :email,  :phone, :mdp, :civility, :birthday, :address, :zipCode, :city, :country)"; // Requéte d'insertion que je stock dans une variable
+    $requet = $pdo->prepare($sql); // je prepare ma requete et je l'execute
+    $requet->execute(array(
+        ':firstName' => $firstName,
+        ':lastName' => $lastName,
+        ':pseudo' => $pseudo,
+        ':email' => $email,
+        ':phone' => $phone,
+        ':mdp' => $mdp,
+        ':civility' => $civility,
+        ':birthday' => $birthday,
+        ':address' => $adress,
+        ':zipCode' => $zipCode,
+        ':city' => $city,
+        ':country' => $country
+    ));
+}
+
+if (!isset($firtName) || strlen($firstName) < 2 || preg_match('/[0-9]+/', $firstName)) {
+
+    echo 'Danger';
+}
+
+// <<<<<<<<<<<<<<<<<<<Fonction pour verifier si un mail existe dans la BDD
+
+function checkEmailUser(string $email): mixed
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM users WHERE  email = :email";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+        ':email' => $email
+    ));
+    $resultat = $request->fetch();
+    return $resultat;
+}
+
+function checkPseudo(string $pseudo): mixed
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM users WHERE  pseudo = :pseudo";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+        ':speudo' => $pseudo
+    ));
+    $resultat = $request->fetch();
+    return $resultat;
+}
 
 
 // <<<<<<<<<<<<<Function pour creer la table film>>>>>>>>>>>>>>>>>>>>>>>>>>>

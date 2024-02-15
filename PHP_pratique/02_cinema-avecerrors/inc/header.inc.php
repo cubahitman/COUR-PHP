@@ -16,7 +16,7 @@
     <!-- Icons Bootstrap -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- mon style -->
-    <link rel="stylesheet" href="<?= RACINE_SITE . 'assets/css/style.css'; ?>">
+    <link rel="stylesheet" href="assets/css/style.css">
 
     <title><?= $title ?></title>
 
@@ -28,7 +28,7 @@
         <nav class="navbar navbar-expand-lg fixed-top ">
             <div class="container-fluid">
 
-                <h1><a class="navbar-brand" href="<?= RACINE_SITE . 'index.php'; ?>">MOVIES</a></h1>
+                <h1><a class="navbar-brand" href="index.php">MOVIES</a></h1>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

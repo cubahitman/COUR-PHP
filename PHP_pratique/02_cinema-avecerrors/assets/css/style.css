@@ -57,4 +57,8 @@
     min-height: 815px; /* je le met afin d'empêcher le footer de rementer dans la page*/
     /* transition: all 0.2s; */
   }
-  
+  h2{
+    font-size: 5rem !important;
+    color: var(--red) !important;
+    font-weight: bolder !important;
+}
