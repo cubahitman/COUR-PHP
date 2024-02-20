@@ -1,31 +1,32 @@
 <?php
-$title = "Inscription";
-require_once "inc/header.inc.php";
+
+
 require_once "inc/functions.inc.php";
 
 // Si l'utilisateur est déjà connecté, il pourras pas avoir accés à la page d'inscription
 if (!empty($_SESSION['user'])) {
 
-    header('location:profil.php');
+    header("location:".RACINE_SITE."profil.php");
 }
 
-echo "<br><br><br><br>";
+echo "<br><br><br><br><br>";
 
 
 
 
-$year1 = ((int) date('Y')) - 12; // 2012
+$year1 = ((int) date('Y'))- 12; // 2012
 $month = (date('m'));
 $date = (date('d'));
 // date limite supèrieure
-$dateLimitSup = $year1 . "-" . $month . "-" . $date;
+$dateLimitSup = $year1."-".$month."-".$date;
 // date limite infèrieur
-$year2 = ((int) date('Y')) - 90;
-$dateLimitInf = $year2 . "-" . $month . "-" . $date;
+$year2 = ((int) date('Y'))- 90;
+$dateLimitInf = $year2."-".$month."-".$date;
 
 $info = '';
 
-if (!empty($_POST)) {
+if ( !empty($_POST)) // l'envoi du Formulaire (button "S'inscrire" ) 
+{
     // debug($_POST);
 
     $verif = true;
@@ -33,25 +34,28 @@ if (!empty($_POST)) {
     foreach ($_POST as $value) {
 
 
-        if (empty($value)) {
+        if (empty($value) ) {
 
             $verif = false;
         }
+
     }
 
     if (!$verif) {
-        // debug($_POST);
+        debug($_POST);
 
 
         $info = alert("Veuillez renseigner tout les champs", "danger");
-    } else {
 
-        // debug($_POST);
+    }
+      else {
+
+        debug($_POST);
 
         // On stock les values de nos champs dans des variables et en les passant dans la fonction trim()
 
-
-
+        
+        
         $firstName = isset($_POST['firstName']) ? $_POST['firstName'] : null;
         $lastName = isset($_POST['lastName']) ? $_POST['lastName'] : null;
         $pseudo = isset($_POST['pseudo']) ? $_POST['pseudo'] : null;
@@ -69,87 +73,113 @@ if (!empty($_POST)) {
 
 
 
-        if (strlen($firstName) < 2 || preg_match('/[0-9]+/', $firstName)) {
+    if ( strlen($firstName) < 2 || preg_match('/[0-9]+/', $firstName) ) {
 
-            $info = alert("Le prénom n'est pas valide.", "danger");
+        $info = alert("Le prénom n'est pas valide.", "danger");
+
+    }
+
+    if ( strlen($lastName) < 2 || preg_match('/[0-9]+/', $lastName) ) {
+
+        $info .= alert("Le nom n'est pas valide.", "danger");
+
+    }
+
+    if (strlen($pseudo) < 2 ) {
+
+        $info .= alert("Le pseudo n'est pas valide.", "danger");
+
+    }
+
+    if ( strlen($mdp) < 5 || strlen($mdp) > 15 ) {
+
+        $info .= alert("Le mot de passe n'est pas valide.", "danger");
+
         }
+    if ( $mdp !== $confirmMdp ) {
+        
+        $info .= alert("Le mot de passe et la confirmation doivent être identique.", "danger");
 
-        if (strlen($lastName) < 2 || preg_match('/[0-9]+/', $lastName)) {
-
-            $info .= alert("Le nom n'est pas valide.", "danger");
-        }
-
-        if (strlen($pseudo) < 2) {
-
-            $info .= alert("Le pseudo n'est pas valide.", "danger");
-        }
-
-        if (strlen($mdp) < 5 || strlen($mdp) > 15) {
-
-            $info .= alert("Le mot de passe n'est pas valide.", "danger");
-        }
+    }
 
 
-        if (strlen($email) > 50 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if ( strlen($email) > 50 || !filter_var($email, FILTER_VALIDATE_EMAIL) ) {
 
-            $info .= alert("L'email n'est pas valide.", "danger");
-        }
+        $info .= alert("L'email n'est pas valide.", "danger");
+        
+    }
 
-        if (!preg_match('#^[0-9]+$#', $phone)) {
+    if ( !preg_match('#^[0-9]+$#', $phone) || strlen($phone) > 10 || !trim($phone)) {
 
-            $info .= alert("Le Téléphone n'est pas valide.", "danger");
-        }
+        $info .= alert("Le Téléphone n'est pas valide.", "danger");
+    }
 
-        if ($civility != 'f' && $civility != 'h') {
-            $info .= alert("La civilité n'est pas valide.", "danger");
-        }
+    if ( $civility != 'f' && $civility != 'h' ) {
+        $info .= alert("La civilité n'est pas valide.", "danger");
+    }
 
-        if (strlen($address) < 5 || strlen($address) > 50) {
-            $info .= alert("L'adresse n'est pas valide.", "danger");
-        }
+    if ( strlen($address) < 5 || strlen($address) > 50  ) {
+        $info .= alert("L'adresse n'est pas valide.", "danger");
+    }
 
-        if (!preg_match('#^[0-9]+$#', $zipCode)) {
-            $info .= alert("Le code postal n'est pas valide.", "danger");
-        }
+    if ( !preg_match('#^[0-9]+$#', $zipCode) ) {
+        $info .= alert("Le code postal n'est pas valide.", "danger");
+    }
 
-        if (strlen($city) > 20) {
-            $info .= alert("La ville n'est pas valide.", "danger");
-        }
+    if ( strlen($city) > 20 ) {
+        $info .= alert("La ville n'est pas valide.", "danger");
+    }
 
-        if (strlen($country) < 5 || strlen($country) > 50) {
-            $info .= alert("Le pays n'est pas valide.", "danger");
-        }
+    if ( strlen($country) < 5 || strlen($country) > 50 ) {
+        $info .= alert("Le pays n'est pas valide.", "danger");
+    }
 
-        if ($birthday > $dateLimitSup && $birthday < $dateLimitInf) {
-            $info .= alert("La date de naissance n'est pas valide.", "danger");
-        }
+    if ( $birthday > $dateLimitSup && $birthday < $dateLimitInf ) {
+        $info .= alert("La date de naissance n'est pas valide.", "danger");
+    }
 
 
-        if (empty($info)) {
+    if ( empty($info) )  {
 
-            $emailExist = checkEmailUser($email);
-            $pseudoExist = checkPseudoUser($pseudo);
+              $emailExist = checkEmailUser($email);
+              $pseudoExist = checkPseudoUser($pseudo);
 
 
             if ($emailExist || $pseudoExist) {
 
-                $info = alert("Vous avez déjà un compte", "danger");
-            } else if ($mdp !== $confirmMdp) {
+                    $info = alert("Vous avez déjà un compte", "danger");
+                    // ***************** REDIRECTION "authentification.php"
+                
+
+
+            } else if ( $mdp !== $confirmMdp) {
 
                 $info .= alert("Le mot de passe et la confirmation doivent être identiques.", "danger");
-            } else {
 
+            } else {
+            
                 $mdp = password_hash($mdp, PASSWORD_DEFAULT);
 
                 inscriptionUsers($firstName, $lastName, $pseudo, $email, $mdp, $phone, $civility, $birthday, $address, $zipCode, $city, $country);
 
                 $info = alert('Vous êtes bien inscrit, vous pouvez vous connectez !', 'success');
-            }
+            
         }
+
+
+        
+
     }
-} else {
-    // debug($_POST);
-    // echo 'Non SUBMIT';
+
+    
+    }
+
+
+} 
+
+else {
+    debug($_POST);
+    echo 'Non SUBMIT';
 }
 
 
@@ -166,7 +196,8 @@ if (!empty($_POST)) {
 
 
 
-
+$title = "Inscription";
+require_once "inc/header.inc.php";
 
 ?>
 
@@ -175,6 +206,12 @@ if (!empty($_POST)) {
     <div class="w-75 m-auto p-5" style="background: rgba(20, 20, 20, 0.9);">
         <h2 class="text-center p-3 mb-5">Créer un compte</h2>
 
+        <?php
+
+            echo $info;
+            
+        ?>
+        
         <form action="" method="post" class="p-5">
 
             <div class="row mb-3">
@@ -220,7 +257,7 @@ if (!empty($_POST)) {
                 <div class="col-md-6 mb-5">
                     <label class="form-label mb-3">Civilité</label>
                     <select class="form-select fs-5" name="civility">
-                        <option value="c">choix</option>
+                       <option value="c">choix</option>
                         <option value="h">Homme</option>
                         <option value="f">Femme</option>
 
@@ -241,15 +278,15 @@ if (!empty($_POST)) {
 
             <div class="row mb-3">
                 <div class="col-md-3">
-                    <label for="zipCode" class="form-label mb-3">Code postal</label>
+                <label for="zipCode" class="form-label mb-3">Code postal</label>
                     <input type="text" class="form-control fs-5" id="zipCode" name="zipCode">
                 </div>
                 <div class="col-md-5">
-                    <label for="city" class="form-label mb-3">Ville</label>
+                <label for="city" class="form-label mb-3">Ville</label>
                     <input type="text" class="form-control fs-5" id="city" name="city">
                 </div>
                 <div class="col-md-4">
-                    <label for="country" class="form-label mb-3">Pays</label>
+                <label for="country" class="form-label mb-3">Pays</label>
                     <input type="text" class="form-control fs-5" id="country" name="country">
                 </div>
             </div>
@@ -265,15 +302,6 @@ if (!empty($_POST)) {
 
 
 </main>
-
-
-
-
-
-
-
-
-
 
 
 

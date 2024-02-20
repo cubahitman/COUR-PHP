@@ -21,16 +21,35 @@ function debug($var)
 
 ////////////////////// Fonction d'alert ////////////////////////////////////////
 
-function alert(string $contenu, string $class): void
+function alert(string $contenu, string $class)
 {
 
-    echo "<div class='alert alert-$class alert-dismissible fade show text-center w-50 m-auto mb-5' role='alert'>
+    return "<div class='alert alert-$class alert-dismissible fade show text-center w-50 m-auto mb-5' role='alert'>
         $contenu
 
             <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
 
         </div>";
 }
+
+
+///////////////////////////// Fonction de déconnexion/////////////////////////
+
+function logOut()
+{
+
+    if (isset($_GET['action']) && !empty($_GET['action']) && $_GET['action'] == 'deconnexion') {
+
+
+        unset($_SESSION['user']);
+        // On supprime l'indice "user " de la session pour se déconnecter // cette fonction détruit les variables  stocké  comme 'firstName' et 'email'.
+
+        //session_destroy(); // Détruit toutes les données de la session déjà  établie . cette fonction détruit la session sur le serveur 
+
+        header("location:" . RACINE_SITE . "index.php");
+    }
+}
+// logOut();
 
 
 ///////////////////////////  Fonction de connexion à la BDD //////////////////////////
@@ -60,7 +79,7 @@ function connexionBdd()
 
     // Sans la variable $dsn et sans le constantes, on se connecte à la BDD :
 
-    $pdo = new PDO('mysql:host=localhost;dbname=cinema;charset=utf8', 'root', '');
+    // $pdo = new PDO('mysql:host=localhost;dbname=cinema;charset=utf8', 'root', '');
 
     // avec la variable DSN (Data Source Name) et les constantes
 
@@ -82,7 +101,7 @@ function connexionBdd()
 
     return $pdo;
 }
-connexionBdd();
+// connexionBdd();
 
 
 ///////////////// Une fonction pour créer la table users ////////////////////
@@ -177,12 +196,13 @@ function checkPseudoUser(string $pseudo)
     return $resultat;
 }
 
-//////////////////Fonction pour verifier un utilisateur /////////////////////
+/////////// Fonction pour vérifier un utilisateur ////////////////////
 
 function checkUser(string $email, string $pseudo): mixed
 {
 
     $pdo = connexionBdd();
+
     $sql = "SELECT * FROM users WHERE pseudo = :pseudo AND email = :email";
     $request = $pdo->prepare($sql);
     $request->execute(array(
@@ -194,6 +214,9 @@ function checkUser(string $email, string $pseudo): mixed
     $resultat = $request->fetch();
     return $resultat;
 }
+
+
+
 
 
 ///////////////// Une fonction pour créer la table films ////////////////////

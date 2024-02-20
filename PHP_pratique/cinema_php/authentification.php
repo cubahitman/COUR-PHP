@@ -1,13 +1,9 @@
 <?php
-$title = "Authentification";
-require_once "inc/header.inc.php";
+
 require_once "inc/functions.inc.php";
 
-// Si l'utilisateur est déjà connecté, il pourras pas avoir accés à la page d'inscription
-if (!empty($_SESSION['user'])) {
 
-    header('location:profil.php');
-}
+
 
 $info = '';
 
@@ -26,7 +22,7 @@ if (!empty($_POST)) {
     }
 
     if (!$verif) {
-        debug($_POST);
+        // debug($_POST);
 
 
         $info = alert("Veuillez renseigner tout les champs", "danger");
@@ -38,30 +34,46 @@ if (!empty($_POST)) {
         $mdp = isset($_POST['mdp']) ? $_POST['mdp'] : null;
 
         $user = checkUser($email, $pseudo);
-    }
-    if ($user) {
-        if (password_verify($mdp, $user['mdp'])) {
+        debug($user);
 
-            $_SESSION['user'] = $user;
+        if ($user) {
 
-            header('location:profil.php');
-        } else {
-            $info = alert("Les identifiant sont incorrectes", "danger");
+            if (password_verify($mdp, $user['mdp'])) {
+
+                $_SESSION['user'] = $user;
+
+                header("location:" . RACINE_SITE . "profil.php");
+            } else {
+                $info = alert("Les identifiants sont incorrectes", "danger");
+            }
         }
-    } else {
-        $info = alert("Les identifiant sont incorrectes", "danger");
+
+        // } else {
+        //     $info = alert("Les identifiants sont incorrectes", "danger");
+
+
+        // }
+
+
+
+
+
     }
 }
-
-
-
-
+$title = "Authentification";
+require_once "inc/header.inc.php";
 ?>
 
 <main style="background:url(assets/img/5818.png) no-repeat; background-size: cover; background-attachment: fixed;" class="pt-5 mt-5">
 
     <div class="w-75 m-auto p-5" style="background: rgba(20, 20, 20, 0.9);">
         <h2 class="text-center p-3 mb-5">Connexion</h2>
+
+        <?php
+
+        echo $info;
+
+        ?>
 
         <form action="" method="post" class="p-5">
             <div class="row mb-3">
