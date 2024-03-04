@@ -15,32 +15,33 @@ require_once "../inc/header.inc.php";
                         <a href="?dashboard_php" class="nav-link text-light">Backoffice</a>
                     </li>
                     <li>
-                        <a href="" class="nav-link text-light">Films</a>
+                        <a href="?films_php" class="nav-link text-light">Films</a>
                     </li>
                     <li>
-                        <a href="" class="nav-link text-light">Catégories</a>
+                        <a href="?categories_php" class="nav-link text-light">Catégories</a>
                     </li>
                     <li>
-                        <a href="" class="nav-link text-light">Utilisateurs</a>
+                        <a href="?users_php" class="nav-link text-light">Utilisateurs</a>
                     </li>
 
                 </ul>
+                <hr>
             </div>
         </div>
 
         <?php
-            if ( isset( $_GET['dashboard_php'] ) ) :
+        if (isset($_GET['dashboard_php'])) :
         ?>
 
-        <div class="w-50 m-auto">
-            <h2>Bonjour Gwladys</h2>
-            <p>Bienvenue sur le backoffice</p>
-            <img src="<?=RACINE_SITE?>assets/img/affiche.jpg" alt="Affiche des films sur le backoffice" width="500" height="800">
-        </div>
+            <div class="w-50 m-auto">
+                <h2>Bonjour Gwladys</h2>
+                <p>Bienvenue sur le backoffice</p>
+                <img src="<?= RACINE_SITE ?>assets/img/affiche.jpg" alt="Affiche des films sur le backoffice" width="500" height="800">
+            </div>
 
         <?php
-        
-            endif;
+
+        endif;
 
         ?>
 

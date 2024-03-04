@@ -163,6 +163,18 @@ function inscriptionUsers(string $firstName, string $lastName, string $pseudo, s
     );
 }
 
+/////////////////Fonction pour recouperrer tout les utilisateurs /////////////////////////////
+
+
+
+function allUsers(): array
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM users";
+    $request = $pdo->query($sql);
+    $result = $request->fetchAll();
+    return $result;
+}
 
 ////////////////// Fonction pour vérifier si un email existe dans la BDD ///////////////////////////////
 
