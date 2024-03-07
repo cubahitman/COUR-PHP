@@ -48,6 +48,8 @@
          */
 
         // $pdo = new PDO("mysql:host=localhost;dbname=entreprise;charset=utf8", "root", "");
+
+
         // On déclare des constantes d'environnement qui vont contenir les informations à la connexion à la BDD
 
         // Constante du serveur => localhost

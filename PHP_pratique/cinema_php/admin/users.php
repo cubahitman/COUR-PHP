@@ -1,9 +1,24 @@
 <?php
+
+require_once "../inc/functions.inc.php";
+
+
+if (!isset($_SESSION['user'])) {
+
+    header("location:" . RACINE_SITE . "authentification.php");
+} else {
+    if ($_SESSION['user']['role'] == 'ROLE_USER') {
+        header("location:" . RACINE_SITE . "index.php");
+    }
+}
+
+$title = "Users";
 require_once "../inc/header.inc.php"
+
 ?>
 
-<div>
-    <h2>Liste des utilisateurs</h2>
+<div class="d-flex flex-column m-auto mt-5 table-responsive">
+    <h2 class="text-center fw-bolder mb-5 text-danger">Liste des utilisateurs</h2>
 
     <table class="table table-dark table-bordered mt-5">
         <thead>
@@ -32,9 +47,9 @@ require_once "../inc/header.inc.php"
             foreach ($users as $user) {
             ?>
                 <tr>
-                    <td><?= $user['id_users'] ?></td>
-                    <td><?= $user['firstName'] ?></td>
-                    <td><?= $user['lastName'] ?></td>
+                    <td><?= $user['id_user'] ?></td>
+                    <td><?= ucfirst($user['firstName']) ?></td>
+                    <td><?= ucfirst($user['lastName']) ?></td>
                     <td><?= $user['pseudo'] ?></td>
                     <td><?= $user['email'] ?></td>
                     <td><?= $user['phone'] ?></td>
@@ -53,3 +68,8 @@ require_once "../inc/header.inc.php"
         </tbody>
     </table>
 </div>
+<?php
+
+require_once "../inc/footer.inc.php"
+
+?>

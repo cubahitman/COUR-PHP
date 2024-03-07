@@ -5,6 +5,13 @@ session_start();
 
 define("RACINE_SITE", "/COUR-PHP/PHP_pratique/cinema_php/"); // constante qui définit les dossiers dans lesquels se situe le site pour pouvoir déterminer des chemin absolus à partir de localhost (on ne prend pas locahost). Ainsi nous écrivons tous les chemins (exp : src, href) en absolus avec cette constante.
 
+// ////////////////funcion avec identite utilisateur //////////////
+function user()
+{
+    $prenom = $_SESSION['user']['firstName'];
+    $nom = $_SESSION['user']['lastName'];
+    echo "$prenom $nom";
+}
 
 ///////////////////////////// Fonction de débugage //////////////////////////
 
@@ -276,6 +283,35 @@ function createTableCategories()
 }
 
 // createTableCategories();
+
+/////////////Une fontion pour ajouter une categorie////////////
+
+function addCategory(string $categoryName, string $description): void
+{
+
+    $pdo = connexionBdd();
+
+    $sql = "INSERT INTO categories (name, description) VALUES (:name, :description)";
+
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+
+        'name' => $categoryName,
+        'description' => $description
+    ));
+}
+
+///////////////////////// Une  fonctin pour recuperer toutes les categories
+
+
+function allCategories(): array
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM categories";
+    $request = $pdo->query($sql);
+    $result = $request->fetchAll();
+    return $result;
+};
 
 ////////////////////// Une fonction pour la création des clés étrangères //////////////////////////
 
