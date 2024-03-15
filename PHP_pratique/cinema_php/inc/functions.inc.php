@@ -264,7 +264,77 @@ function createTableFilms()
     $request = $pdo->exec($sql);
 }
 
+
+//////////////////// Une fonction pour récupérer  et afficher tout le films ////////////////////
+
+function allFilms(): array
+{
+    $pdo = connexionBdd();
+
+    $sql = "SELECT films. *, categories.name as genre FROM films
+    INNER JOIN categories 
+    ON films.category_id = categories.id_category";
+    $request = $pdo->query($sql);
+    $result = $request->fetchAll();
+
+    return $result;
+}
+
 // createTableFilms();
+///////////////// Une fonction pour afficher un film ////////////////////
+
+function showFilm(int $id): mixed
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM films WHERE id_film = :id";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+        ':id' => $id
+    ));
+
+    $result = $request->fetch();
+    return $result;
+}
+/////////////////// Une fonction pour montrer les categories ////////////////////
+function showCategory(int $id): mixed
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM categories WHERE id_category = :id";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+        ':id' => $id
+    ));
+
+    $result = $request->fetch();
+    return $result;
+}
+
+
+/////////////////// Une fonction pour delete les categories ////////////////////
+
+// function supprimerCategorie(int $id): void
+// {
+//     $pdo = connexionBdd();
+
+//     // Supprimer les films associés à la catégorie
+//     $sqlSuppressionFilms = "UPDATE FROM films WHERE category_id = :id";
+//     $requeteSuppressionFilms = $pdo->prepare($sqlSuppressionFilms);
+//     $requeteSuppressionFilms->execute([':id' => $id]);
+
+//     // Supprimer la catégorie
+//     $sqlSuppressionCategorie = "DELETE FROM categories WHERE id_category = :id";
+//     $requeteSuppressionCategorie = $pdo->prepare($sqlSuppressionCategorie);
+//     $requeteSuppressionCategorie->execute([':id' => $id]);
+// }
+function supprimerCategorie(int $id): void
+{
+    $pdo = connexionBdd();
+
+    // Supprimer la catégorie
+    $sqlSuppressionCategorie = "DELETE FROM categories WHERE id_category = :id";
+    $requeteSuppressionCategorie = $pdo->prepare($sqlSuppressionCategorie);
+    $requeteSuppressionCategorie->execute([':id' => $id]);
+}
 
 ///////////////// Une fonction pour créer la table categories ////////////////////
 
@@ -301,6 +371,7 @@ function addCategory(string $categoryName, string $description): void
     ));
 }
 
+
 ///////////////////////// Une  fonctin pour recuperer toutes les categories
 
 
@@ -312,6 +383,10 @@ function allCategories(): array
     $result = $request->fetchAll();
     return $result;
 };
+
+
+
+
 
 ////////////////////// Une fonction pour la création des clés étrangères //////////////////////////
 

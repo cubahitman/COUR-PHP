@@ -11,6 +11,24 @@ if (!isset($_SESSION['user'])) {
     }
 }
 
+if (isset($_GET['action']) && isset($_GET['id_category'])) {
+
+    if (!empty($_GET['action']) && $_GET['action'] == 'update' && !empty($_GET['id_category'])) {
+
+        $idCategory = $_GET['id_category'];
+        $category = showCategory($idCategory);
+    }
+}
+
+if (isset($_GET['action']) && isset($_GET['id_category'])) {
+
+    if (!empty($_GET['action']) && $_GET['action'] == 'delete' && !empty($_GET['id_category'])) {
+
+        $idCategory = $_GET['id_category'];
+        $category = supprimerCategorie($idCategory);
+    }
+}
+
 $title = "Catégories";
 require_once "../inc/header.inc.php";
 
@@ -56,13 +74,21 @@ if (!empty($_POST)) {
 }
 
 
-//
+
+if (isset($_GET['action']) && isset($_GET['id_film'])) {
+
+    if (!empty($_GET['action']) && $_GET['action'] == 'update' && !empty($_GET['id_category'])) {
+
+        $idCategory = $_GET['id_category'];
+        $category = showCategory($idCategory);
+    }
+}
 
 ?>
 
 <div class="row mt-5 justify-content-center">
     <div class="col-sm-12 col-md-5 m-5">
-        <h2 class="text-center fw-bolder mb-5">Ajouter des catégories</h2>
+        <h2 class="text-center fw-bolder mb-5"><?= isset($category) ?  'Modifier ' : 'Ajouter categorie' ?></h2>
 
         <?php
         echo $info;
@@ -72,14 +98,16 @@ if (!empty($_POST)) {
             <div class="row">
                 <div class="col-md-12 mb-5">
                     <label for="name">Nom de la catégorie</label>
-                    <input type="text" id="name" name="name" class="form-control" value="">
+                    <input type="text" id="name" name="name" class="form-control" value="<?= isset($category) ? $category['name'] : "" ?>">
                 </div>
                 <div class="col-md-12 mb-5">
                     <label for="description">Description</label>
-                    <textarea name="description" id="description" cols="30" rows="10" class="form-control"></textarea>
+                    <textarea name="description" id="description" cols="30" rows="10" class="form-control">
+                    <?= isset($category) ? $category['description'] : "" ?>
+                    </textarea>
                 </div>
                 <div class="row">
-                    <button type="submit" class="btn btn-danger p-3 fs-3">Ajouter</button>
+                    <button type="submit" class="btn btn-danger p-3 fs-3"><?= isset($category) ?  'Modifier ' : 'Ajouter categorie' ?></button>
                 </div>
             </div>
         </form>
@@ -109,14 +137,23 @@ if (!empty($_POST)) {
                 ?>
                     <tr>
                         <td><?= $category['id_category'] ?></td>
-                        <td><?= ucfirst($category['name']) ?></td>
-                        <td><?= substr(ucfirst($category['description']), 0, 40) . "..." ?></td>
-                        <td><?php ?></td>
-                        <td><?php ?></td>
+                        <td><?= html_entity_decode(ucfirst($category['name'])) ?></td>
+                        <td><?= substr(html_entity_decode(ucfirst($category['description'])), 0, 40) . "...." ?></td>
+                        <td class="text-center">
+                            <a href="?categories_php&action=delete&id_category=<?= $category['id_category'] ?>">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            <a href="?categories_php&action=update&id_category=<?= $category['id_category'] ?>">
+                                <i class="bi bi-pen-fill"></i>
+                            </a>
+                        </td>
                     </tr>
 
                 <?php
                 }
+
                 ?>
             </tbody>
         </table>

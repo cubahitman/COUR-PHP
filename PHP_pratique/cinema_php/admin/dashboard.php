@@ -27,7 +27,7 @@ require_once "../inc/header.inc.php";
                         <a href="?dashboard_php" class="nav-link text-light">Backoffice</a>
                     </li>
                     <li>
-                        <a href="?gestionFilms_php" class="nav-link text-light">Films</a>
+                        <a href="?Films_php" class="nav-link text-light">Films</a>
                     </li>
                     <li>
                         <a href="?categories_php" class="nav-link text-light">Catégories</a>
@@ -81,8 +81,8 @@ require_once "../inc/header.inc.php";
 
 
     if (!empty($_GET)) { // si ma variable $_GET n'est pas vide, cela veut dire j'ai cliqué sur un lien de ma sidebarre, l'index de la variable $_GET change selon le lien indique dans la balise "a"
-        if (isset($_GET['gestionFilms_php'])) {
-            require_once "gestionFilms.php";
+        if (isset($_GET['Films_php'])) {
+            require_once "Films.php";
         } else if (isset($_GET['categories_php'])) {
             require_once "categories.php";
         } else if (isset($_GET['users_php'])) {

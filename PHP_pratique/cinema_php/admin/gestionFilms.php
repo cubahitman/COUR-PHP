@@ -14,6 +14,15 @@ if (!isset($_SESSION['user'])) {
 }
 
 
+if (isset($_GET['action']) && isset($_GET['id_film'])) {
+
+    if (!empty($_GET['action']) && $_GET['action'] == 'update' && !empty($_GET['id_film'])) {
+
+        $idFilm = $_GET['id_film'];
+        $film = showFilm($idFilm);
+    }
+}
+
 // echo '<br> <br> <br> <br>';
 $info = '';
 
@@ -83,7 +92,7 @@ require_once "../inc/header.inc.php";
 <main class="">
 
 
-    <h2 class="text-center fw-bolder mb-5 text-danger">Ajouter un film</h2>
+    <h2 class="text-center fw-bolder mb-5 text-danger"><?= isset($film) ?  'Modifier un films' : 'Ajouter un film' ?></h2>
 
 
     <form action="" method="post" enctype="multipart/form-data" ">
@@ -92,7 +101,7 @@ require_once "../inc/header.inc.php";
         <div class=" row">
         <div class="col-md-6 mb-5">
             <label for="title">Titre</label>
-            <input type="text" id="title" name="title" class="form-control" value="">
+            <input type="text" id="title" name="title" class="form-control" value="<?= $film['title'] ?? '' ?>">
         </div>
         <div class="col-md-6 mb-5">
             <label for="image">Photo</label>
@@ -105,11 +114,11 @@ require_once "../inc/header.inc.php";
         <div class="row">
             <div class="col-md-6 mb-5">
                 <label for="director">Réalisateur</label>
-                <input type="text" id="director" name="director" class="form-control" value="">
+                <input type="text" id="director" name="director" class="form-control" value="<?= $film['director'] ?? '' ?>">
             </div>
             <div class="col-md-6 mb-5">
                 <label for="actors">Acteur(s)</label>
-                <input type="text" id="actors" name="actors" class="form-control" placeholder="Séparez les noms d'acteurs avec un /">
+                <input type="text" id="actors" name="actors" value="<?= $film['actors'] ?? '' ?>" class="form-control" placeholder="Séparez les noms d'acteurs avec un /">
             </div>
         </div>
 
@@ -118,9 +127,9 @@ require_once "../inc/header.inc.php";
             <div class="mb-3">
                 <label for="ageLimit" class="form-label">Age limite</label>
                 <select multiple name="ageLimit" id="ageLimit" class="form-select form-select-lg">
-                    <option value="10">10</option>
-                    <option value="13">13</option>
-                    <option value="16">16</option>
+                    <option value="10" <?php if (isset($film['ageLimite']) && $film['ageLimit'] == 10) echo 'selected' ?>>10</option>
+                    <option value="13" <?php if (isset($film['ageLimite']) && $film['ageLimit'] == 13) echo 'selected' ?>>13</option>
+                    <option value="16" <?php if (isset($film['ageLimite']) && $film['ageLimit'] == 16) echo 'selected' ?>>16</option>
 
                 </select>
             </div>
@@ -128,11 +137,25 @@ require_once "../inc/header.inc.php";
 
         <div class="row">
             <label for="category">Genre du film</label>
-            <div class="form-check col-sm-12 col-md-4">
-                <input type="radio" name="category" id="flexRadioDefault1" value="" class="form-check">
-                <label class="form-check-label" for="flexRadioDefault1"></label>
-            </div>
 
+
+            <?php
+
+            $categories = allCategories();
+            // debug($categories);
+
+            foreach ($categories as $category) {
+
+
+            ?>
+
+
+                <div class="form-check col-sm-12 col-md-4">
+                    <input type="radio" name="category" class="form-check" id="flexRadioDefault1" value="<?= $category['name'] ?>" <?php if (isset($film['category_id']) && $film['category_id'] == $category['id_category']) echo 'checked' ?>>
+
+                    <label class="form-check-label" for="flexRadioDefault1"><?= $category['name'] ?></label>
+                </div>
+            <?php    }  ?>
         </div>
 
         <div class="row">
@@ -166,7 +189,7 @@ require_once "../inc/header.inc.php";
             </div>
         </div>
         <div class="row justify-content-center">
-            <button type="submit" class="btn btn-danger fs-3 w-25 p-3">Ajouter</button>
+            <button type="submit" class="btn btn-danger fs-3 w-25 p-3"><?= isset($film) ?  'update' : 'Ajouter' ?></button>
         </div>
     </form>
 </main>
