@@ -1,7 +1,30 @@
 <?php
 
 include_once "../inc/functions.inc.php";
+// *******************
+if (isset($_GET['action']) && isset($_GET['id_user'])) {
 
+    if (!empty($_GET['action']) && $_GET['action'] == 'delete' && !empty($_GET['id_user'])) {
+        // debug($_GET['action']);
+
+        $idUser = htmlentities($_GET['id_user']);
+
+        deleteUser($idUser);
+    }
+    if (!empty($_GET['action']) && $_GET['action'] == 'update' && !empty($_GET['id_user'])) {
+        // debug($_GET['action']);
+        $user = showUser($_GET['id_user']);
+        if ($user['role'] == 'ROLE_ADMIN') {
+
+            updateRole('ROLE_USER', $user['id_user']);
+        }
+        if ($user['role'] == 'ROLE_USER') {
+
+            updateRole('ROLE_ADMIN', $user['id_user']);
+        }
+    }
+    // header("location:" . RACINE_SITE . "dashboard.php?users_php");
+}
 if (!isset($_SESSION['user'])) {
 
     header("location:" . RACINE_SITE . "authentification.php");

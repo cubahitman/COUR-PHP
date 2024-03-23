@@ -14,6 +14,14 @@ if (!isset($_SESSION['user'])) {
 $films = allFilms();
 
 
+if (!empty($_GET['action']) && $_GET['action'] == 'delete' && !empty($_GET['id_film'])) {
+
+    $idCategory = $_GET['id_film'];
+    $category = deleteFilm($idCategory);
+}
+
+
+
 $title = "Films";
 require_once "../inc/header.inc.php"
 
@@ -77,7 +85,7 @@ require_once "../inc/header.inc.php"
                         <td><?= $film['date'] ?></td>
 
                         <td class="text-center">
-                            <a href="gestionFilms.php?action=delete&id_film=<?= $film['id_film'] ?>">
+                            <a href="films.php?action=delete&id_film=<?= $film['id_film'] ?>">
                                 <i class="bi bi-trash3-fill"></i>
                             </a>
                         </td>

@@ -33,8 +33,9 @@ if (isset($_GET['action']) && isset($_GET['id_film'])) {
 
 $info = '';
 
+
 if (!empty($_POST)) {
-    debug($_POST);
+    // debug($_POST);
 
     $verif = true;
 
@@ -50,16 +51,14 @@ if (!empty($_POST)) {
     if (!empty($_FILES['image']['name'])) { // si le nom du fichier en cours de téléchargement n'est pas vide, alors c'est qu'on est entrain de télécharger une photo
         // debug($_FILES);
 
-        $image = 'img/' . $_FILES['image']['name']; // $image contient le chemin relatif de la photo et sera enregistré en BDD. On utilise ce chemin pour les "src" des balises <img>.
+        $image = $_FILES['image']['name']; // $image contient le chemin relatif de la photo et sera enregistré en BDD. On utilise ce chemin pour les "src" des balises <img>.
 
-        copy($_FILES['image']['tmp_name'], '../assets/' . $image);
 
-        // On enregistre le fichier image qui se trouve à l'adresse contenue dans $_FILES['image']['tmp_name'] vers la destination qui est le dossier "img" à l'adresse "../assets/nom_du_fichier.jpg".
 
     }
 
     if (!$verif || empty($image)) {
-        $info = alert("Tous les champs sont sont requis", "danger");
+        $info = alert("Tous les champs sont requis", "danger");
     } else {
         if ($_FILES['image']['error'] != 0 || $_FILES['image']['size'] == 0 || !isset($_FILES['image']['type'])) {
             $info = alert("L'image n'est pas valide", "danger");
@@ -72,17 +71,12 @@ if (!empty($_POST)) {
 
         if (!isset($_POST['director']) || (strlen($_POST['director']) < 2 && trim($_POST['director'])) || preg_match('/[0-9]+/', $_POST['director'])) {
 
-            $info .= alert("Le champs Réalisateur n'est pas valide", "danger");
+            $info .= alert("Le champs réalisateur n'est pas valide", "danger");
         }
 
-        // if (!isset($_POST['actors']) || (strlen($_POST['actors']) < 3 && trim($_POST['actors'])) || preg_match('/[0-9]+/', $_POST['actors'])) {
+        // if (!isset($_POST['actors']) || (strlen($_POST['actors']) < 3 && trim($_POST['actors'])) || preg_match('/[0-9]+/', $_POST['actors']) || !preg_match('/.*\/.*/', $_POST['actors'])) { // valider que l'utilisateur a bien inséré le symbole '/' : chaîne de caractères qui contient au moins un caractère avant et après le symbole /.
 
-        //     $info .= alert("Le champs acteurs n'est pas valide", "danger");
-        // } else {
-
-        //     if (!isset($_POST['actors']) || $_POST['actors'] > 1 || (strlen($_POST['actors']) < 3 && trim($_POST['actors'])) || preg_match('/[0-9]+/', $_POST['actors']) || !preg_match('/.*\/.*/', $_POST['actors'])) { // valider que l'utilisateur a bien inséré le symbole '/' : chaîne de caractères qui contient au moins un caractère avant et après le symbole /.
-        //         $info .= alert("Le champs acteurs n'est pas valide, il faut séparer les acteurs avec le symbole /", "danger");
-        //     }
+        //     $info .= alert("Le champs acteurs n'est pas valide, il faut séparer les acteurs avec le symbole", "danger");
         // }
 
         if (!isset($_POST['categories'])) {
@@ -126,16 +120,30 @@ if (!empty($_POST)) {
             $duration = $_POST['duration'];
             $synopsis = htmlentities(trim($_POST['synopsis']));
             $dateSortie = $_POST['date'];
+            $image = $_FILES['image']['name'];
             $price = (float) htmlentities(trim($_POST['price']));
             $stock = (int) $_POST['stock'];
             $ageLimit = $_POST['ageLimit'];
+
+
+
+            if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id_film'])) {
+
+                // $idFilm = $film['id_film'];
+                // $image = $_FILES['image']['name'];
+
+
+
+
+                copy($_FILES['image']['tmp_name'], '../assets/img/' . $image);
+
+                // On enregistre le fichier image qui se trouve à l'adresse contenue dans $_FILES['image']['tmp_name'] vers la destination qui est le dossier "img" à l'adresse "../assets/nom_du_fichier.jpg".
+                updateFilm($id,  $category,  $title, $director, $actors,  $ageLimit,  $duration, $synopsis,  $dateSortie,  $image, $price, $stock);
+            } else {
+                $result = addFilm($category, $title, $director, $actors, $ageLimit, $duration, $synopsis, $dateSortie, $image, $price, $stock);
+            }
         }
     }
-
-
-
-
-
 
 
     // $title = isset($_POST['title']) ? $_POST['title'] : null;
@@ -157,17 +165,19 @@ if (!empty($_POST)) {
     // $_FILES['image']['tmp-name']; EMPLECEMENT TEMPERAIRE
     // $_FILES['image']['error']; ERRORE SI OUI L'IMAGE a été recemptionné
 
+    //////=============================
+
+
+    // 
+
+
 }
-
-
-
-
 
 
 $title = 'Gestion des films';
 
-
 require_once "../inc/header.inc.php";
+
 ?>
 
 <main>
@@ -178,6 +188,7 @@ require_once "../inc/header.inc.php";
     ?>
     <form action="" method="post" enctype="multipart/form-data">
         <!-- l'attribut enctype spécifie que le formulaire envoie des fichiers en plus des données texte => permet d'uploader un fichier (ex photo)-->
+
         <div class="row">
             <div class="col-md-6 mb-5">
                 <label for="title">Titre</label>
@@ -224,7 +235,7 @@ require_once "../inc/header.inc.php";
 
             ?>
                 <div class="form-check col-sm-12 col-md-4">
-                    <input type="radio" name="categories" class="form-check-input" id="flexRadioDefault1" value="<?= $category['name'] ?>" <?php if (isset($film['category_id']) && $film['category_id'] == $category['id_category']) echo 'checked' ?>>
+                    <input type="radio" name="categories" class="form-check-input" id="flexRadioDefault1" value="<?= $category['id_category'] ?>" <?php if (isset($film['category_id']) && $film['category_id'] == $category['id_category']) echo 'checked' ?>>
 
                     <label class="form-check-label" for="flexRadioDefault1"><?= $category['name'] ?></label>
                 </div>
@@ -274,16 +285,6 @@ require_once "../inc/header.inc.php";
 
 
 </main>
-
-
-
-
-
-
-
-
-
-
 
 
 

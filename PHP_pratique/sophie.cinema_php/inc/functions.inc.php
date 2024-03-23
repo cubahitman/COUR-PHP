@@ -3,15 +3,19 @@
 
 session_start();
 
-define("RACINE_SITE", "/COUR-PHP/PHP_pratique/cinema_php/"); // constante qui définit les dossiers dans lesquels se situe le site pour pouvoir déterminer des chemin absolus à partir de localhost (on ne prend pas locahost). Ainsi nous écrivons tous les chemins (exp : src, href) en absolus avec cette constante.
+// constante qui définit les dossiers dans lesquels se situe le site pour pouvoir déterminer des chemin absolus à partir de localhost (on ne prend pas locahost). Ainsi nous écrivons tous les chemins (exp : src, href) en absolus avec cette constante.
+define("RACINE_SITE", "/COUR-PHP/PHP_pratique/sophie.cinema_php/");
 
-// ////////////////funcion avec identite utilisateur //////////////
-function user()
+////////////////////////////
+
+function stringToArray(string $string): array
 {
-    $prenom = $_SESSION['user']['firstName'];
-    $nom = $_SESSION['user']['lastName'];
-    echo "$prenom $nom";
+    $array = explode('/', trim($string, '/'));
+    //je tranforme ma chaine de caracteres en tableau et je supprime le "/" autour de la chaine de caracttere
+
+    return $array;
 }
+
 
 ///////////////////////////// Fonction de débugage //////////////////////////
 
@@ -170,64 +174,6 @@ function inscriptionUsers(string $firstName, string $lastName, string $pseudo, s
     );
 }
 
-/////////////////Fonction pour recouperrer tout les utilisateurs /////////////////////////////
-
-
-
-function allUsers(): array
-{
-    $pdo = connexionBdd();
-    $sql = "SELECT * FROM users";
-    $request = $pdo->query($sql);
-    $result = $request->fetchAll();
-    return $result;
-}
-
-//////////////////////////////////////////////////////////////////  fonctions pour supprimer un utilisateur ///////////////////////////////////////////////////////////////////////////////////
-
-
-function deleteUser(int $id): void
-{
-    $pdo = connexionBdd();
-    $sql = "DELETE FROM users WHERE id_user = :id_user";
-    $request = $pdo->prepare($sql);
-    $request->execute(array(
-
-        ':id_user' => $id
-
-    ));
-}
-
-///////////////////////////////////////////////////// Fonction pour modifier le rôle//////////////////////////////
-
-
-function updateRole(string $role, int $id): void
-{
-    $pdo = connexionBdd();
-    $sql = "UPDATE users SET role = :role WHERE id_user = :id_user";
-    $request = $pdo->prepare($sql);
-    $request->execute(array(
-        ':role' => $role,
-        ':id_user' => $id
-
-    ));
-}
-
-///////////////////// Récupérer et afficher un seul utilisteur  ////////////////////////
-
-function showUser(int $id): array
-{
-    $pdo = connexionBdd();
-    $sql = "SELECT * FROM users WHERE id_user = :id_user";
-    $request = $pdo->prepare($sql);
-    $request->execute(array(
-
-        ':id_user' => $id
-
-    ));
-    $result = $request->fetch();
-    return $result;
-}
 
 ////////////////// Fonction pour vérifier si un email existe dans la BDD ///////////////////////////////
 
@@ -280,11 +226,141 @@ function checkUser(string $email, string $pseudo): mixed
     return $resultat;
 }
 
+//  /////////////////Fonction pour récupérer tous les utilisateurs///////////////////
+
+
+function allUsers(): array
+{
+
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM users";
+    $request = $pdo->query($sql);
+    $result = $request->fetchAll();
+    return $result;
+}
+
+// /////////////////  Fonction pour recupereer un seul utilisateur  //////////////////////
+
+function showUser(int $id): array
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM users WHERE id_user = :id_user";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+
+        ':id_user' => $id
+
+    ));
+    $result = $request->fetch();
+    return $result;
+}
+
+// /////////////////  Fonction pour supprimer un utilisateur  ///////////////////////
+
+
+function deleteUser(int $id): void
+{
+    $pdo = connexionBdd();
+    $sql = "DELETE FROM users WHERE id_user = :id_user";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+
+        ':id_user' => $id
+
+    ));
+}
+
+// ////////////////////  Fonction pour modifier le role d'un utilisateur//////////////
+
+function updateRole(string $role, int $id): void
+{
+    $pdo = connexionBdd();
+    $sql = "UPDATE users SET role = :role WHERE id_user = :id_user";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+        ':role' => $role,
+        ':id_user' => $id
+
+    ));
+}
+
+
+//////////////une fonction pour recupérer toutes les catégories//////////
+
+function allCategories(): array
+{
+
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM categories";
+    $request = $pdo->query($sql);
+    $result = $request->fetchAll();
+    return $result;
+}
+
+
+////////////////// fonction pour récupérer tous les films/////////////////////
+
+function allFilms(): array
+{
+
+    $pdo = connexionBdd();
+    $sql = "SELECT films.* , categories.name as genre
+    FROM films
+    LEFT JOIN categories ON films.category_id = categories.id_category";
+    $request = $pdo->query($sql);
+    $result = $request->fetchAll();
+    return $result;
+}
+
+// //////////////  Fonction pour récuperer un film qui a la même catégorie  /////////////////
+
+function filmByCategory(int $id): array
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM films WHERE category_id = :id";
+    $request = $pdo->prepare($sql);
+    $request->execute([':id' => $id]);
+
+    $result = $request->fetchAll();
+    return $result;
+}
 
 
 
+//////////////  fonction pour afficher un film///////////////
 
-///////////////// Une fonction pour créer la table films ////////////////////
+function showFilm(int $id): mixed
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM films WHERE id_film = :id ";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+        ':id' => $id
+    ));
+
+    $result = $request->fetch();
+    return $result;
+}
+
+
+
+// //////////   fonction pour afficher une categorie  ////////////
+
+function showCategory(int $id): mixed
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM categories WHERE id_category = :id ";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+        ':id' => $id
+    ));
+
+    $result = $request->fetch();
+    return $result;
+}
+
+
+/////////////  Une fonction pour créer la table films /////////////
 
 function createTableFilms()
 {
@@ -310,145 +386,9 @@ function createTableFilms()
     $request = $pdo->exec($sql);
 }
 
-
-//////////////////// Une fonction pour récupérer  et afficher tout le films ////////////////////
-
-function allFilms(): array
-{
-    $pdo = connexionBdd();
-
-    $sql = "SELECT films. *, categories.name as genre FROM films
-    INNER JOIN categories 
-    ON films.category_id = categories.id_category";
-    $request = $pdo->query($sql);
-    $result = $request->fetchAll();
-
-    return $result;
-}
-
 // createTableFilms();
-///////////////// Une fonction pour afficher un film ////////////////////
 
-function showFilm(int $id): mixed
-{
-    $pdo = connexionBdd();
-    $sql = "SELECT * FROM films WHERE id_film = :id";
-    $request = $pdo->prepare($sql);
-    $request->execute(array(
-        ':id' => $id
-    ));
-
-    $result = $request->fetch();
-    return $result;
-}
-// -----------------
-
-function addFilm(int $category_id, string $title, string $director, string $actors, string $ageLimit, string $duration, string $synopsis, string $date, string $image, float $price, string $stock)
-{
-
-    $pdo = connexionBdd();
-    $sql = "INSERT INTO films
-    (category_id, title, director, actors, ageLimit, duration, synopsis, date, image, price, stock)
-    VALUES(:category_id, :title, :director, :actors, :ageLimit, :duration, :synopsis, :date, :image, :price, :stock)";
-    $request = $pdo->prepare($sql);
-    $request->execute(array(
-        ":category_id" => $category_id,
-        ":titleFilm" => $title,
-        ":director" => $director,
-        ":actors" => $actors,
-        ":ageLimit" => $ageLimit,
-        ":duration" => $duration,
-        ":synopsis" => $synopsis,
-        ":date" => $date,
-        ":image" => $image,
-        ":price" => $price,
-        ":stock" => $stock
-    ));
-}
-// =============
-function deleteFilm(int $id): void
-{
-    $pdo = connexionBdd();
-
-    // Supprimer la catégorie
-    $sqlSuppressionFilm = "DELETE FROM films WHERE id_film = :id";
-    $requeteSuppressionFilm = $pdo->prepare($sqlSuppressionFilm);
-    $requeteSuppressionFilm->execute([':id' => $id]);
-}
-
-/////////////////// Une fonction pour afficher les films le plus recents ////////////////////
-
-function filmByDate()
-{
-
-    $pdo = connexionBdd();
-    $sql = "SELECT * FROM films ORDER BY date DESC LIMIT 6";
-    $request = $pdo->query($sql);
-    $result = $request->fetchAll();
-    return $result;
-}
-
-
-
-
-/////////////////// Une fonction pour recuperer les films qui ont la meme categorie ////////////////////
-
-function filmBycategoryId(int $id)
-{
-
-    $pdo = connexionBdd();
-    $sql = "SELECT * FROM films WHERE category_id = :id";
-    $request = $pdo->prepare($sql);
-    $request->execute(array(
-        ':id' => $id
-    ));
-    $result = $request->fetchALL();
-    return $result;
-}
-
-
-/////////////////// Une fonction pour montrer les categories ////////////////////
-function showCategory(int $id): mixed
-{
-    $pdo = connexionBdd();
-    $sql = "SELECT * FROM categories WHERE id_category = :id";
-    $request = $pdo->prepare($sql);
-    $request->execute(array(
-        ':id' => $id
-    ));
-
-    $result = $request->fetch();
-    return $result;
-}
-
-
-/////////////////// Une fonction pour delete les categories ////////////////////
-
-// function supprimerCategorie(int $id): void
-// {
-//     $pdo = connexionBdd();
-
-//     // Supprimer les films associés à la catégorie
-//     $sqlSuppressionFilms = "UPDATE FROM films WHERE category_id = :id";
-//     $requeteSuppressionFilms = $pdo->prepare($sqlSuppressionFilms);
-//     $requeteSuppressionFilms->execute([':id' => $id]);
-
-//     // Supprimer la catégorie
-//     $sqlSuppressionCategorie = "DELETE FROM categories WHERE id_category = :id";
-//     $requeteSuppressionCategorie = $pdo->prepare($sqlSuppressionCategorie);
-//     $requeteSuppressionCategorie->execute([':id' => $id]);
-// }
-function supprimerCategorie(int $id): void
-{
-    $pdo = connexionBdd();
-
-    // Supprimer la catégorie
-    $sqlSuppressionCategorie = "DELETE FROM categories WHERE id_category = :id";
-    $requeteSuppressionCategorie = $pdo->prepare($sqlSuppressionCategorie);
-    $requeteSuppressionCategorie->execute([':id' => $id]);
-}
-
-///////////////// Une fonction pour créer la table categories ////////////////////
+//////// Une fonction pour créer la table categories //////////////
 
 function createTableCategories()
 {
@@ -466,7 +406,7 @@ function createTableCategories()
 
 // createTableCategories();
 
-/////////////Une fontion pour ajouter une categorie////////////
+// ///////   Fonction pour ajouter une catégorie   /////////////
 
 function addCategory(string $categoryName, string $description): void
 {
@@ -478,29 +418,112 @@ function addCategory(string $categoryName, string $description): void
     $request = $pdo->prepare($sql);
     $request->execute(array(
 
-        'name' => $categoryName,
-        'description' => $description
+        ':name' => $categoryName,
+        ':description' => $description
+    ));
+}
+
+////////  Fonction pour supprimer une categorie //////////
+
+
+function deleteCategory(int $id): void
+{
+    $pdo = connexionBdd();
+
+    // // Supprimer les films associés à la catégorie
+    // $sql = "DELETE FROM films WHERE category_id = :id";
+    // $request = $pdo->prepare($sql);
+    // $request->execute([':id' => $id]);
+
+    // Supprimer la catégorie
+    $sql = "DELETE FROM categories WHERE id_category = :id";
+    $request = $pdo->prepare($sql);
+    $request->execute(array(':id' => $id));
+}
+
+
+// ///////////  Fonction pour ajouter un film  ////////////
+
+function addFilm($category, string $title, string $director, string $actors, string $ageLimit, string $duration, string $synopsis, string $dateSortie, string $image, float $price, int $stock): void
+{
+
+    $pdo = connexionBdd();
+
+    $sql = "INSERT INTO films (category_id, title, director, actors, ageLimit, duration, synopsis, date, image, price, stock) VALUES (:category_id, :title, :director, :actors, :ageLimit, :duration, :synopsis, :date, :image, :price, :stock)";
+
+    $request = $pdo->prepare($sql);
+    $request->execute(array(
+
+        ':category_id' => $category,
+        ':title' => $title,
+        ':director' => $director,
+        ':actors' => $actors,
+        ':ageLimit' => $ageLimit,
+        ':duration' => $duration,
+        ':synopsis' => $synopsis,
+        ':date' => $dateSortie,
+        ':image' => $image,
+        ':price' => $price,
+        ':stock' => $stock
+    ));
+}
+
+// /////////////////Cette fonction 'updateFilm' met à jour les informations d'un film existant dans la base de données.//////////////////
+
+
+function updateFilm(int $id, int $category, string $title, string $director, string $actors, string $ageLimit, string $duration, string $synopsis, string $dateSortie, string $image, float $price, int $stock): void
+{
+    // Établir une connexion à la base de données en utilisant la fonction 'connexionBdd'.
+    $pdo = connexionBdd();
+
+    // Préparer la requête SQL pour mettre à jour les informations du film.
+    // ':id' est l'identifiant unique du film à mettre à jour.
+    $sql = "UPDATE films SET category_id = :category_id, title = :title, director = :director, actors = :actors, ageLimit = :ageLimit, duration = :duration, synopsis = :synopsis, date = :date, image = :image, price = :price, stock = :stock WHERE id = :id";
+
+    // Préparer la requête SQL pour l'exécution en utilisant la connexion à la base de données.
+    $request = $pdo->prepare($sql);
+
+    // Exécuter la requête préparée avec un tableau associatif contenant les valeurs des paramètres.
+    $request->execute(array(
+        ':id' => $id, // L'identifiant du film.
+        ':category_id' => $category, // L'identifiant de la catégorie du film.
+        ':title' => $title, // Le titre du film.
+        ':director' => $director, // Le réalisateur du film.
+        ':actors' => $actors, // Les acteurs du film.
+        ':ageLimit' => $ageLimit, // La limite d'âge pour le film.
+        ':duration' => $duration, // La durée du film.
+        ':synopsis' => $synopsis, // Le synopsis du film.
+        ':date' => $dateSortie, // La date de sortie du film.
+        ':image' => $image, // L'image du film.
+        ':price' => $price, // Le prix du film.
+        ':stock' => $stock // Le stock du film.
     ));
 }
 
 
-///////////////////////// Une  fonctin pour recuperer toutes les categories
+// //////////  Fonction pour supprimer un film/////////////
 
-
-function allCategories(): array
+function deleteFilm(int $id): void
 {
     $pdo = connexionBdd();
-    $sql = "SELECT * FROM categories";
+
+    $sql = "DELETE FROM films WHERE id_film = :id";
+    $request = $pdo->prepare($sql);
+    $request->execute([':id' => $id]);
+}
+
+// //////////////// fonction pour trier les films les plus recents  ////////////////////////
+
+function filmByDate()
+{
+    $pdo = connexionBdd();
+    $sql = "SELECT * FROM films ORDER BY date DESC LIMIT 6";
     $request = $pdo->query($sql);
     $result = $request->fetchAll();
     return $result;
-};
+}
 
-
-
-
-
-////////////////////// Une fonction pour la création des clés étrangères //////////////////////////
+///////  Une fonction pour la création des clés étrangères /////
 
 // $tableF : table où on va créer la clé étrangère
 // $tableP : table à partir de laquelle on récupère la clé primaire
