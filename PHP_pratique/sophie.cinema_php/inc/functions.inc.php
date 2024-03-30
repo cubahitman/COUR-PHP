@@ -332,8 +332,15 @@ function filmByCategory(int $id): array
 function showFilm(int $id): mixed
 {
     $pdo = connexionBdd();
-    $sql = "SELECT * FROM films WHERE id_film = :id ";
+    // $sql = "SELECT * FROM films WHERE id_film = :id ";
+    $sql = "SELECT films.*, categories.name AS genre
+    FROM films
+    LEFT JOIN categories
+    ON films.category_id = categories.id_category
+    WHERE id_film = :id";
+
     $request = $pdo->prepare($sql);
+
     $request->execute(array(
         ':id' => $id
     ));
@@ -341,6 +348,7 @@ function showFilm(int $id): mixed
     $result = $request->fetch();
     return $result;
 }
+
 
 
 
@@ -471,21 +479,21 @@ function addFilm($category, string $title, string $director, string $actors, str
 // /////////////////Cette fonction 'updateFilm' met à jour les informations d'un film existant dans la base de données.//////////////////
 
 
-function updateFilm(int $id, int $category, string $title, string $director, string $actors, string $ageLimit, string $duration, string $synopsis, string $dateSortie, string $image, float $price, int $stock): void
+function updateFilm(int $id_film, int $category, string $title, string $director, string $actors, string $ageLimit, string $duration, string $synopsis, string $dateSortie,             float $price, int $stock): void
 {
     // Établir une connexion à la base de données en utilisant la fonction 'connexionBdd'.
     $pdo = connexionBdd();
 
     // Préparer la requête SQL pour mettre à jour les informations du film.
     // ':id' est l'identifiant unique du film à mettre à jour.
-    $sql = "UPDATE films SET category_id = :category_id, title = :title, director = :director, actors = :actors, ageLimit = :ageLimit, duration = :duration, synopsis = :synopsis, date = :date, image = :image, price = :price, stock = :stock WHERE id = :id";
+    $sql = "UPDATE films SET id_film = :id_film, category_id = :category_id, title = :title, director = :director, actors = :actors, ageLimit = :ageLimit, duration = :duration, synopsis = :synopsis, date = :date             , price = :price, stock = :stock WHERE id_film = :id_film";
 
     // Préparer la requête SQL pour l'exécution en utilisant la connexion à la base de données.
     $request = $pdo->prepare($sql);
 
     // Exécuter la requête préparée avec un tableau associatif contenant les valeurs des paramètres.
     $request->execute(array(
-        ':id' => $id, // L'identifiant du film.
+        ':id_film' => $id_film, // L'identifiant du film.
         ':category_id' => $category, // L'identifiant de la catégorie du film.
         ':title' => $title, // Le titre du film.
         ':director' => $director, // Le réalisateur du film.
@@ -494,7 +502,7 @@ function updateFilm(int $id, int $category, string $title, string $director, str
         ':duration' => $duration, // La durée du film.
         ':synopsis' => $synopsis, // Le synopsis du film.
         ':date' => $dateSortie, // La date de sortie du film.
-        ':image' => $image, // L'image du film.
+        // ':image' => $image, // L'image du film.
         ':price' => $price, // Le prix du film.
         ':stock' => $stock // Le stock du film.
     ));
@@ -544,6 +552,20 @@ function foreignKey(string $tableF, string $foreign, string $tableP, string $pri
 // foreignKey('films', 'category_id', 'categories', 'id_category');
 
 
+
+////////////////////////////////////////////////// PANIER /////////////////////////////////
+
+// calculerMontantTotal() pour calculer le montant total du panier en additionnant les prix de chaque film.
+function calculerMontantTotal(array $tab): int
+{
+    $montant_total = 0;
+
+    foreach ($tab as $key) {
+        $montant_total += $key['price'] * $key['quantity'];
+    }
+
+    return $montant_total;
+}
 
 
 ?>

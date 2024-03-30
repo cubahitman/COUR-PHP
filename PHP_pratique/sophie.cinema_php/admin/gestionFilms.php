@@ -1,5 +1,6 @@
 <?php
-
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 require_once "../inc/functions.inc.php";
 
 if (!isset($_SESSION['user'])) {
@@ -57,7 +58,7 @@ if (!empty($_POST)) {
 
     }
 
-    if (!$verif || empty($image)) {
+    if (!$verif) {
         $info = alert("Tous les champs sont requis", "danger");
     } else {
         if ($_FILES['image']['error'] != 0 || $_FILES['image']['size'] == 0 || !isset($_FILES['image']['type'])) {
@@ -129,16 +130,20 @@ if (!empty($_POST)) {
 
             if (isset($_GET['action']) && $_GET['action'] == 'update' && isset($_GET['id_film'])) {
 
-                // $idFilm = $film['id_film'];
-                // $image = $_FILES['image']['name'];
+                $id_Film = $film['id_film'];
+                $image = $_FILES['image']['name'];
+                $id = $_GET['id_film'];
 
 
+                if ($_FILES['image']['error'] == UPLOAD_ERR_OK) {
+                    // Mettre à jour les informations du film, y compris l'image, dans la base de données.
+                    updateFilm($id, $category, $title, $director, $actors, $ageLimit, $duration, $synopsis, $dateSortie, $price, $stock);
+                    // Déplacer le fichier téléchargé vers le dossier 'assets/img/'
+                    move_uploaded_file($_FILES['image']['tmp_name'], '../assets/img/' . $image);
 
-
-                copy($_FILES['image']['tmp_name'], '../assets/img/' . $image);
-
-                // On enregistre le fichier image qui se trouve à l'adresse contenue dans $_FILES['image']['tmp_name'] vers la destination qui est le dossier "img" à l'adresse "../assets/nom_du_fichier.jpg".
-                updateFilm($id,  $category,  $title, $director, $actors,  $ageLimit,  $duration, $synopsis,  $dateSortie,  $image, $price, $stock);
+                    header("Location: " . RACINE_SITE . "/admin/films.php");
+                    exit; // Arrêter l'exécution du script après la redirection
+                }
             } else {
                 $result = addFilm($category, $title, $director, $actors, $ageLimit, $duration, $synopsis, $dateSortie, $image, $price, $stock);
             }

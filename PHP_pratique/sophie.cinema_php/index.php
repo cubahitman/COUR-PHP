@@ -1,5 +1,5 @@
      <?php
-
+     // $films = array();
 
      $title = "Accueil";
      require_once "inc/header.inc.php";
@@ -17,11 +17,14 @@
                if (count($films) == 0) {
                     $info = alert("Aucun film dans cette categorie", "danger");
                }
+          } else if (isset($_GET['voirPlus'])) {
+               $films = allFilms();
+               $message = "films à vous proposer.";
           }
      } else {
-          $films = allFilms();
+          $films = filmByDate();
+          $mssage = "films récents à vous proposer.";
      }
-
 
 
      ?>
@@ -45,11 +48,11 @@
                     ?>
 
                          <div class="card bg-dark m-2 mx-auto" style="width: 35rem;">
-                              <img src="<?= RACINE_SITE."assets/img/".$film['image'] ?>" class="card-img-top" alt="image du film">
+                              <img src="<?= RACINE_SITE . "assets/img/" . $film['image'] ?>" class="card-img-top" alt="image du film">
                               <div class="card-body d-flex flex-column">
                                    <h3 class="card-title"><?= ucfirst($film['title']) ?></h3>
                                    <p class="card-text fs-4 "><?= substr(ucfirst($film['synopsis']), 0, 100) . "..." ?></p>
-                                   <a href="<? RACINE_SITE . "showFilm.php?id_film=" . $film['id_film'] ?>" class="btn btn-danger w-50 fs-3 mx-auto ">Plus de détails</a>
+                                   <a href="<?= RACINE_SITE . "showFilms.php?id_film=" . $film['id_film'] ?>" class="btn btn-danger w-50 fs-3 mx-auto ">Plus de détails</a>
                               </div>
                          </div>
 
@@ -63,7 +66,7 @@
                     ?>
 
                          <div class="col-12 text-center">
-                              <a href="<?=RACINE_SITE?>index.php?voirplus" class="btn p-4 fs-3">Voir plus</a>
+                              <a href="<?= RACINE_SITE ?>index.php?voirPlus" class="btn p-4 fs-3">Voir plus</a>
                          </div>
 
 

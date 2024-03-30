@@ -14,11 +14,16 @@ if (!isset($_SESSION['user'])) {
 
 // ************************************************
 
+if (!empty($_GET['action']) && $_GET['action'] == 'delete' && !empty($_GET['id_film'])) {
+
+    $idCategory = $_GET['id_film'];
+    $category = deleteFilm($idCategory);
+}
 
 
 
 $title = "Films";
-
+require_once "../inc/header.inc.php"
 ?>
 
 <main>
@@ -60,7 +65,7 @@ $title = "Films";
                 ?>
                     <tr>
 
-                        <!-- Je récupére les valeus de mon tabelau $film dans des td -->
+                        <!-- Je récupére les valeus de mon tableau $film dans des td -->
                         <td><?= $film['id_film'] ?></td>
                         <td><?= ucfirst($film['title']) ?></td>
 
@@ -92,7 +97,7 @@ $title = "Films";
                         <td><?= ucfirst($film['stock']) ?></td>
                         <td><?= substr(ucfirst($film['synopsis']), 0, 100) . "..." ?></td>
                         <td><?= ucfirst($film['date']) ?></td>
-                        <td class="text-center"><a href="gestionFilms.php?action=delete&id_film=<?= $film['id_film'] ?>"><i class="bi bi-trash3-fill text-danger"></i></a></td>
+                        <td class="text-center"><a href="films.php?action=delete&id_film=<?= $film['id_film'] ?>"><i class="bi bi-trash3-fill text-danger"></i></a></td>
 
                         <td class="text-center"><a href="gestionFilms.php?action=update&id_film=<?= $film['id_film'] ?>"><i class="bi bi-pen-fill"></i></a></td>
 
